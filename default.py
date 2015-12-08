@@ -32,20 +32,12 @@ def build_url(query):
 def add_sort_methods():
     xbmcplugin.addSortMethod(addon_handle, 1)
 
-# def add_directory(title, image_url, url):
-#     li = xbmcgui.ListItem(title, iconImage=image_url)
-#     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=li, isFolder=True)
-
 def add_video_item(title, file_url):
     li = xbmcgui.ListItem(title)
     li.setInfo('video', {'title': title})
     li.setProperty('mimetype', 'video/flv')
     li.setProperty('IsPlayable', 'true')
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=file_url, listitem=li)
-
-# def play_video():
-#     li = xbmcgui.ListItem(path=url)
-#     xbmcplugin.setResolvedUrl( handle=addon_handle, succeeded=True, listitem=li)
 
 def retrieve_play_url(episodeurl):
     url = urllib2.urlopen(episodeurl)
@@ -64,21 +56,15 @@ def retrieve_play_url(episodeurl):
 
 if mode is None:
     url = urllib2.urlopen(base_url)
-    # add_sort_methods()
     xbmcplugin.setContent(addon_handle, 'movies')
 
     if url:
         index = url.read()
-        # print(index)
         soup = BeautifulSoup(index, 'html.parser')
-        # print(soup.prettify(encoding='utf-8'))
         soup = BeautifulSoup(str(soup.select('[class~=post-outer]')[0]), 'html.parser')
-        # print(soup)
         for element in soup.find_all('a'):
             if 'href' in element.attrs:
                 if 'gamingcx.com' in element.attrs['href']:
-                    # print(unicode(element.attrs['href']))
-                    # print(element.string)
                     add_video_item(element.string, sys.argv[0] + urllib.quote(unicode(element.attrs['href'])) + '?mode=play_video')
 
     xbmcplugin.endOfDirectory(addon_handle)
